@@ -18,12 +18,23 @@ Or install it yourself as:
     $ gem install flickr_collage
 
 ## Usage
-    Imagemagick needs to be installed
-    ```sudo apt-get install imagemagick libmagickwand-dev```
-    For help:
-```flickrcollage -h```
+Imagemagick needs to be installed:
+```
+sudo apt-get install imagemagick libmagickwand-dev
+```
+    
+For help:
+
+```
+flickrcollage -h
+```
+
+
 For demo:
-```flickrcollage -t list,of,tags -o output_filename```
+
+```
+flickrcollage -t list,of,tags -o output_filename
+```
 
 ## Development
 
