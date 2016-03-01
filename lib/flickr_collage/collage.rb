@@ -10,7 +10,7 @@ class Collage
 
 
   PHOTO_URI = "https://farm%{farm}.staticflickr.com/%{server}/%{id}_%{secret}_m.jpg"
-  TOTAL_IMAGE_COUNT = 10
+  TOTAL_PHOTO_COUNT = 10
 
   COLUMNS = 5
   ROWS    = 2
@@ -18,7 +18,7 @@ class Collage
   WIDTH  = 1024
   HEIGHT = 768
 
-  attr_accessor :photos, :api, :options, :temp_dir
+  attr_accessor :photos, :api, :options, :temp_dir, :queried_tags
 
   def initialize(opts = {})
     default_options = {tags: [],
@@ -27,26 +27,37 @@ class Collage
                        # temp_dir: File.expand_path("../../../temp", __FILE__),
                        verbose:false}
 
-    @options = default_options.merge(opts)
-    @api     = FlickrApi.new
-    @photos = []
-    @verbose = options.fetch(:verbose,false)
+    @options      = default_options.merge(opts)
+    @api          = FlickrApi.new
+    @photos       = []
+    @queried_tags = []
+    @verbose      = options.fetch(:verbose,false)
+
+    options[:tags] = options[:tags].uniq
+    if options[:tags].count > TOTAL_PHOTO_COUNT
+      puts "More than 10 tags were given;only taking into account first 10 tags"
+      options[:tags] = options[:tags][0,10]
+    end
+
     FileUtils::mkdir_p(options[:temp_dir]) unless File.exists?(options[:temp_dir])
-    puts "Initialized" if options[:verbose]
+    puts "Initialized Collage: #{self.inspect}" if options[:verbose]
   end
 
   def get_collage
     options[:tags].each do |tag|
       get_photos_by_tag(tag)
+      queried_tags << tag
     end
 
     puts "Total photos from given tags: #{photos.count}" if options[:verbose]
-    while photos.count < TOTAL_IMAGE_COUNT do
-      difference = TOTAL_IMAGE_COUNT - photos.count
+    while photos.count < TOTAL_PHOTO_COUNT do
+      difference = TOTAL_PHOTO_COUNT - photos.count
       random_tags = get_random_tags(difference)
       puts "Random tags from dictionary: #{random_tags.inspect}" if options[:verbose]
       random_tags.each do |tag|
+        next if queried_tags.include? tag
         get_photos_by_tag(tag)
+        queried_tags << tag
       end
     end
     create_collage
