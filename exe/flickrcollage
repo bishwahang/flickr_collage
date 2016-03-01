@@ -1,0 +1,59 @@
+#!/usr/bin/env ruby
+# encoding: utf-8
+
+require 'optparse'
+require 'ostruct'
+require_relative '../lib/flickr_collage'
+
+# module to parse args
+module OptParser
+  def self.parse(args)
+    # options
+    options          = OpenStruct.new
+    opt_parser = OptionParser.new do |opts|
+      opts.banner = "Usage: collage [options]"
+
+      opts.separator ""
+      opts.separator "Specific options:"
+
+      opts.on("-o","--output OUTPUT", "Output filename: collage.jpeg") do |out|
+        options.output = out
+      end
+      opts.on("-t dogs,cats,unicorn","--tags TAGS", Array, "Search for tags: dogs,cats,unicorn") do |tags|
+        options.tags = tags
+      end
+      opts.on("-d /tmp/dir/path/","--dir-temp /tmp/dir/path/", "Provide temp dir: /tmp/dir/path/") do |dir|
+        options.temp_dir = dir
+      end
+      opts.separator ""
+      opts.separator "Common options:"
+      # No argument, shows at tail.  This will print an options summary.
+      # Try it and see!
+      opts.on_tail("-h","--help", "Show this message") do
+        puts opts
+        exit
+      end
+
+      # Another typical switch to print the version.
+      opts.on_tail("--version", "Show version") do
+        puts Collage::VERSION
+        exit
+      end
+
+      opts.on("-v", "--[no-]verbose", "Run verbosely") do |v|
+        options.verbose = v
+      end
+    end
+
+    opt_parser.parse!(args)
+    options
+  end
+end
+
+options       = OptParser.parse(ARGV)
+reqd_args = %w(output tags)
+if reqd_args.any? {|e| options[e].nil?}
+  print "\nFor help: flickrcollage -h \n\n"
+  raise OptionParser::MissingArgument
+end
+FlickrCollage.run(options.to_h)
