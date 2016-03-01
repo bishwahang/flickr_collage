@@ -18,7 +18,7 @@ class Collage
   WIDTH  = 1024
   HEIGHT = 768
 
-  attr_accessor :photos, :api, :options, :temp_dir, :queried_tags
+  attr_accessor :photos, :options, :temp_dir, :queried_tags
 
   def initialize(opts = {})
     default_options = {tags: [],
@@ -27,7 +27,6 @@ class Collage
                        verbose:false}
 
     @options      = default_options.merge(opts)
-    @api          = FlickrApi.new
     @photos       = []
     @queried_tags = []
     @verbose      = options.fetch(:verbose,false)
@@ -70,7 +69,7 @@ class Collage
       puts "Could not create the given temp directory: #{File.absolute_path(options[:temp_dir])}"
       abort(e.message)
     else
-      puts "Created temp directory: #{File.absolute_path(options[:temp_dir])}"
+      puts "Created temp directory: #{File.absolute_path(options[:temp_dir])}" if options[:verbose]
     end
   end
 
@@ -85,7 +84,7 @@ class Collage
   def get_photos_by_tag(tag)
     puts "getting photos for tag #{tag}" if options[:verbose]
     image_urls = []
-    photos_json = api.search_tag(tag: tag)
+    photos_json = FlickrApi.search_tag(tag: tag)
     photos_json.each do |photo|
       photo = photo.reduce({}) do |memo, (k, v)|
           memo.merge({ k.to_sym => v })
