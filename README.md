@@ -1,8 +1,5 @@
 # FlickrCollage
-
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/flickr_collage`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Give the list of tags (maximum 10) and output filename, the gem searches for photos using Flickr API and creates a collage.
 
 ## Installation
 
@@ -21,8 +18,12 @@ Or install it yourself as:
     $ gem install flickr_collage
 
 ## Usage
-
-TODO: Write usage instructions here
+    Imagemagick needs to be installed
+    ```sudo apt-get install imagemagick libmagickwand-dev```
+    For help:
+```flickrcollage -h```
+For demo:
+```flickrcollage -t list,of,tags -o output_filename```
 
 ## Development
 
@@ -32,7 +33,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/flickr_collage. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/bishwahang/flickr_collage. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 
 ## License
