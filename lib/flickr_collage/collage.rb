@@ -24,7 +24,6 @@ class Collage
     default_options = {tags: [],
                        output: "/tmp/test_output.png",
                        temp_dir: "/tmp/photos/",
-                       # temp_dir: File.expand_path("../../../temp", __FILE__),
                        verbose:false}
 
     @options      = default_options.merge(opts)
@@ -33,13 +32,9 @@ class Collage
     @queried_tags = []
     @verbose      = options.fetch(:verbose,false)
 
-    options[:tags] = options[:tags].uniq
-    if options[:tags].count > TOTAL_PHOTO_COUNT
-      puts "More than 10 tags were given;only taking into account first 10 tags"
-      options[:tags] = options[:tags][0,10]
-    end
+    create_temp_dir
+    filter_tags
 
-    FileUtils::mkdir_p(options[:temp_dir]) unless File.exists?(options[:temp_dir])
     puts "Initialized Collage: #{self.inspect}" if options[:verbose]
   end
 
@@ -65,6 +60,27 @@ class Collage
   end
 
   private
+  def create_temp_dir
+    begin
+      FileUtils::mkdir_p(options[:temp_dir]) unless File.exists?(options[:temp_dir])
+    rescue Exception => e
+      if options[:verbose]
+        puts e.backtrace.inspect
+      end
+      puts "Could not create the given temp directory: #{File.absolute_path(options[:temp_dir])}"
+      abort(e.message)
+    else
+      puts "Created temp directory: #{File.absolute_path(options[:temp_dir])}"
+    end
+  end
+
+  def filter_tags
+    options[:tags] = options[:tags].uniq
+    if options[:tags].count > TOTAL_PHOTO_COUNT
+      puts "More than 10 tags were given;only taking into account first 10 tags"
+      options[:tags] = options[:tags][0,10]
+    end
+  end
 
   def get_photos_by_tag(tag)
     puts "getting photos for tag #{tag}" if options[:verbose]
