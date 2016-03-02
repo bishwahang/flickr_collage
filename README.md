@@ -22,6 +22,11 @@ Imagemagick needs to be installed:
 ```
 sudo apt-get install imagemagick libmagickwand-dev
 ```
+Also, FlickrApi key needs to be set in the environment.
+
+```
+export FLICKR_API_KEY='your api key goes here'
+```
     
 For help:
 
